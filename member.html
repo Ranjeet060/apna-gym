@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Member Panel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header id="header">
+    <div class="container header-container">
+      <a href="#" class="logo">Apna<span>Gym</span></a>
+      <nav>
+        <ul id="nav-menu">
+          <li><a href="index.html">Home</a></li>
+        </ul>
+        <button id="mobile-menu-btn" class="mobile-menu-btn" type="button">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Login Section -->
+  <section class="hero" id="member-login">
+    <div class="container" id="loginSection">
+      <h2>Member Login</h2>
+      <input type="email" id="loginEmail" placeholder="Enter Email" />
+      <input type="password" id="loginPassword" placeholder="Enter Password" />
+      <button id="loginBtn">Login</button>
+      
+    </div>
+  </section>
+
+
+  <!-- Member Panel -->
+  <section class="container" id="memberPanel" style="display: none;">
+
+
+<section class="container" id="myprofile">
+  <div class="myprofile">
+    <button onclick="viewMyProfile()">My Profile</button>
+    <div id="profileDisplay" ></div>
+  </div>
+</section>
+
+    <div class="section-title">
+      <h3>Your Bills</h3>
+      <ul id="billsData"></ul>
+    </div>
+
+    <div class="section-title">
+      <h3>Your Diet Plans</h3>
+      <ul id="dietsData"></ul>
+    </div>
+
+    <div class="section-title">
+      <h3>Your Supplements</h3>
+      <ul id="supplementsData"></ul>
+    </div>
+
+    <div class="section-title">
+      <h3>Your Notifications</h3>
+      <ul id="notificationsData"></ul>
+    </div>
+     
+    <button onclick="logout()">Logout</button>
+  </section>
+
+  <!-- Firebase Script -->
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+  import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8oRn6GsVLkiop6mwtlvLJ1vFuEMOiIKg",
+    authDomain: "apna-gym-f5033.firebaseapp.com",
+    projectId: "apna-gym-f5033",
+    storageBucket: "apna-gym-f5033.appspot.com",
+    messagingSenderId: "144589871781",
+    appId: "1:144589871781:web:47197e784bf6b18a388b4c",
+    measurementId: "G-H68R74PD0N"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginBtn = document.getElementById("loginBtn");
+
+    loginBtn.addEventListener("click", async () => {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        sessionStorage.setItem("memberEmail", email);
+
+        alert("Login Successful!");
+
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("memberPanel").style.display = "block";
+
+        loadAllData(email);
+      } catch (error) {
+        alert("Login Failed: " + error.message);
+      }
+    });
+  });
+
+  async function loadAllData(email) {
+    await loadSection('bills', 'billsData', email);
+    await loadSection('diets', 'dietsData', email);
+    await loadSection('supplements', 'supplementsData', email);
+    await loadSection('notifications', 'notificationsData', email);
+  }
+
+  async function loadSection(collectionName, containerId, email) {
+    const q = query(collection(db, collectionName), where("email", "==", email));
+    const snapshot = await getDocs(q);
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+
+    if (snapshot.empty) {
+      container.innerHTML = "<p>No data found.</p>";
+      return;
+    }
+
+    // Generate table
+    const table = document.createElement("table");
+    table.border = "1";
+    table.style.borderCollapse = "collapse";
+    table.style.width = "100%";
+
+    // Extract headers
+    const firstDoc = snapshot.docs[0].data();
+    const headers = Object.keys(firstDoc).filter((key) => key !== "email");
+    const headerRow = document.createElement("tr");
+    headers.forEach((header) => {
+      const th = document.createElement("th");
+      th.textContent = header.toUpperCase();
+      th.style.padding = "6px";
+      headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+    // Populate rows
+    snapshot.forEach((doc) => {
+      const row = document.createElement("tr");
+      const data = doc.data();
+      headers.forEach((key) => {
+        const td = document.createElement("td");
+        let value = data[key];
+        if (value && value.seconds) {
+          const date = new Date(value.seconds * 1000);
+          value = `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}-${date.getFullYear()} ${date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+          })}`;
+        }
+        td.textContent = value;
+        td.style.padding = "6px";
+        row.appendChild(td);
+      });
+      table.appendChild(row);
+    });
+
+    container.appendChild(table);
+  }
+
+  window.logout = async function () {
+    await signOut(auth);
+    sessionStorage.clear();
+    window.location.reload();
+  };
+
+  window.viewMyProfile = async function () {
+  const user = auth.currentUser;
+  if (!user) return alert("You must be logged in");
+
+  const membersRef = collection(db, "members");
+  const q = query(membersRef, where("email", "==", user.email));
+  const snapshot = await getDocs(q);
+
+  const displayDiv = document.getElementById("profileDisplay");
+  displayDiv.innerHTML = "";
+
+  if (snapshot.empty) {
+    displayDiv.textContent = "No profile found for this member.";
+    return;
+  }
+
+  // Define the desired field order
+  const fieldOrder = [
+    "name",
+    "gender",
+    "email",
+    "age",
+    "phone",
+    "address",
+    "package",
+    "joiningDate",
+    "createdAt"
+  ];
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const table = document.createElement("table");
+    table.border = "1";
+    table.style.borderCollapse = "collapse";
+    table.style.width = "100%";
+
+    fieldOrder.forEach((key) => {
+      if (data.hasOwnProperty(key)) {
+        const row = document.createElement("tr");
+
+        const th = document.createElement("th");
+        th.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+        th.style.padding = "6px";
+        th.style.textAlign = "left";
+
+        const td = document.createElement("td");
+        let value = data[key];
+
+        // Convert Timestamp to readable format
+        if (value && value.seconds) {
+          const date = new Date(value.seconds * 1000);
+          value = `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}-${date.getFullYear()} ${date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+          })}`;
+        }
+
+        td.textContent = value;
+        td.style.padding = "6px";
+
+        row.appendChild(th);
+        row.appendChild(td);
+        table.appendChild(row);
+      }
+    });
+
+    displayDiv.appendChild(table);
+  });
+};
+
+      
+</script>
+  <script type="module">
+  import { addMember } from './script.js';
+
+  document.getElementById("addBtn").addEventListener("click", () => {
+    const data = {
+      name: "Rohit",
+      email: "rohit@gmail.com",
+      age: 25
+    };
+    addMember(data);
+  });
+</script>
+
+</body>
+</html>

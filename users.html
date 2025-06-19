@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"></script>
+</head>
+<body>
+ <!-- Header -->
+  <header id="header">
+    <div class="container header-container">
+      <a href="#" class="logo">Apna<span>Gym</span></a>
+      <nav>
+        <ul id="nav-menu">
+          <li><a href="index.html">Home</a></li>
+        </ul>
+        <button id="mobile-menu-btn" class="mobile-menu-btn" type="button">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Login Section -->
+  <section class="hero" id="user-login">
+    <div class="container">
+      <h1>User Login</h1>
+      <input type="email" id="userEmail" placeholder="Email"><br/>
+      <input type="password" id="userPassword" placeholder="Password"><br/>
+      <button onclick="userLogin()">Login</button>
+      <button onclick="userRegister()">Register</button>  
+    </div>
+  </section>
+
+  <!-- User Panel -->
+   <section class="container" id="userPanelSection" >
+  <div id="userPanel" style="display: none;">
+    <h2>Welcome to the User Panel</h2>
+    <br>
+    <input type="text" id="searchInput" placeholder="Search by Name or Email">
+    <button onclick="searchMembers()">Search</button>
+    <ul id="searchResults"></ul>
+
+
+<br>
+    <button onclick="viewAllMembers()">View All Members</button>
+    <ul id="allMembersList"></ul>
+   
+
+<br>
+    <button onclick="logout()">Logout</button>
+    </div>
+</section>
+  
+  <!-- Botpress Chatbot -->
+  <script src="https://cdn.botpress.cloud/webchat/v2.5/inject.js"></script>
+  <script src="https://files.bpcontent.cloud/2025/05/26/15/20250526154905-M5FGFFF9.js"></script>
+  <script>
+    window.botpressWebChat.init({
+      composerPlaceholder: "Chat with AI_Chatbot",
+      botId: "AI_Chatbot",
+      hostUrl: "https://cdn.botpress.cloud/webchat/v2",
+      messagingUrl: "https://messaging.botpress.cloud",
+      clientId: "888e972a-9952-48e2-b971-8a581eb962de",
+      webhookId: "msf6gff9",
+      lazySocket: true,
+      themeName: "prism",
+      botName: "AI_Chatbot",
+      avatarUrl: "",
+      stylesheet: "",
+      enableConversationDeletion: true,
+      showPoweredBy: false,
+    });
+  </script>
+
+  <!-- Main App Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8oRn6GsVLkiop6mwtlvLJ1vFuEMOiIKg",
+      authDomain: "apna-gym-f5033.firebaseapp.com",
+      projectId: "apna-gym-f5033",
+      storageBucket: "apna-gym-f5033.appspot.com",
+      messagingSenderId: "144589871781",
+      appId: "1:144589871781:web:47197e784bf6b18a388b4c",
+      measurementId: "G-H68R74PD0N"
+    };
+ 
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.userRegister = async function () {
+      const email = document.getElementById("userEmail").value;
+      const password = document.getElementById("userPassword").value;
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Registration successful. You can now log in.");
+      } catch (error) {
+        alert("Registration Failed: " + error.message);
+      }
+    };
+
+    window.userLogin = async function () {
+      const email = document.getElementById("userEmail").value;
+      const password = document.getElementById("userPassword").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        document.getElementById("user-login").style.display = "block";
+        document.getElementById("userPanel").style.display = "block";
+      } catch (error) {
+        alert("Login Failed: " + error.message);
+      }
+    };
+
+    window.logout = async function () {
+      await signOut(auth);
+      window.location.reload();
+    };
+
+   window.viewAllMembers = async function () {
+  const membersRef = collection(db, "members");
+  const snapshot = await getDocs(membersRef);
+  const list = document.getElementById("allMembersList");
+  list.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const li = document.createElement("li");
+    const data = doc.data();
+
+    // Format all timestamp fields
+    for (const key in data) {
+      if (data[key]?.seconds) {
+        const date = new Date(data[key].seconds * 1000);
+        data[key] = `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}-${date.getFullYear()} ${date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        })}`;
+      }
+    }
+
+    // Format output
+    li.innerHTML = `
+      <strong>Name:</strong> ${data.name || "N/A"}<br>
+      <strong>Email:</strong> ${data.email || "N/A"}<br>
+      <strong>Phone:</strong> ${data.phone || "N/A"}<br>
+      <strong>Age:</strong> ${data.age || "N/A"}<br>
+      <strong>Gender:</strong> ${data.gender || "N/A"}<br>
+      <strong>Address:</strong> ${data.address || "N/A"}<br>
+      <strong>Created At:</strong> ${data.createdAt || "N/A"}
+      <hr>
+    `;
+
+    list.appendChild(li);
+  });
+
+  if (!list.hasChildNodes()) {
+    list.innerHTML = "<li>No members found.</li>";
+  }
+};
+
+
+  window.searchMembers = async function () {
+  const searchInput = document.getElementById("searchInput").value.toLowerCase();
+  const membersRef = collection(db, "members");
+  const snapshot = await getDocs(membersRef);
+  const list = document.getElementById("searchResults");
+  list.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+
+    // Check if name or email includes the search term
+    if (
+      data.name?.toLowerCase().includes(searchInput) ||
+      data.email?.toLowerCase().includes(searchInput)
+    ) {
+      // Format any timestamp fields (e.g., createdAt)
+      for (const key in data) {
+        if (data[key]?.seconds) {
+          const date = new Date(data[key].seconds * 1000);
+          data[key] = `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}-${date.getFullYear()} ${date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+          })}`;
+        }
+      }
+
+      // Create readable output
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>Name:</strong> ${data.name || "N/A"}<br>
+        <strong>Email:</strong> ${data.email || "N/A"}<br>
+        <strong>Phone:</strong> ${data.phone || "N/A"}<br>
+        <strong>Age:</strong> ${data.age || "N/A"}<br>
+        <strong>Gender:</strong> ${data.gender || "N/A"}<br>
+        <strong>Address:</strong> ${data.address || "N/A"}<br>
+        <strong>Created At:</strong> ${data.createdAt || "N/A"}
+        <hr>
+      `;
+      list.appendChild(li);
+    }
+  });
+
+  if (!list.hasChildNodes()) {
+    list.innerHTML = "<li>No matching members found.</li>";
+  }
+};
+
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

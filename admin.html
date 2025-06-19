@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Gym - Admin Panel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"></script>
+ <style>
+  section:not(#adminLoginSection) {
+    display: none;
+  }
+</style>
+
+
+</head>
+<body>
+
+<header id="header">
+   
+  <div class="container header-container">
+    <a href="#" class="logo">Apna<span>Gym</span></a>
+    <nav>
+      <ul id="nav-menu">
+        <li><a href="index.html">Home</a></li>
+      </ul>
+      <button id="mobile-menu-btn" class="mobile-menu-btn" type="button">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </nav>
+     <button onclick="logout()" style="display:none;" id="logoutBtn">Logout</button>
+  </div>
+  
+</header>
+
+
+  
+  <!-- Admin Login Section -->
+  <section class="hero" id="adminLoginSection">
+    <div class="container">
+      <h2>Admin Login</h2>
+      <input type="email" id="adminEmail" placeholder="Admin Email">
+      <input type="password" id="adminPassword" placeholder="Password">
+      <button onclick="adminLogin()">Login</button>
+    </div>
+  </section>
+<main id="main-content"> 
+  <div class="container">
+  <!-- Add Member -->
+  <section   id="addMemberSection">
+    <div class="container">
+    <h2>Add Member</h2>
+    <input type="text" id="memberName" placeholder="Name">
+    <input type="email" id="memberEmail" placeholder="Email">
+    <input type="password" id="memberPassword" placeholder="Password">
+    <input type="text" id="memberPhone" placeholder="Phone">
+    <input type="number" id="memberAge" placeholder="Age">
+    <input type="text" id="memberGender" placeholder="Gender">
+    <input type="text" id="memberAddress" placeholder="Address">
+    <button onclick="addMember()">Add Member</button>
+    </div>
+  </section>
+
+  <!-- Create Bill -->
+  <section id="createBillSection">
+     <div class="container">
+    <h2>Create Bill</h2>
+    <input type="email" id="billMemberEmail" placeholder="Member Email">
+    <input type="number" id="billAmount" placeholder="Amount">
+    <input type="date" id="billDueDate">
+    <button onclick="createBill()">Add Bill</button>
+    </div>
+  </section>
+
+  <!-- Supplements -->
+  <section id="addSupplementSection">
+      <div class="container">
+    <h2>Add Supplement</h2>
+     <input type="email" id="billMemberEmail" placeholder="Member Email">
+    <input type="text" id="supplementName" placeholder="Supplement Name">
+    <input type="number" id="supplementStock" placeholder="Stock">
+    <input type="number" id="supplementPrice" placeholder="Price">
+    <button onclick="addSupplement()">Add Supplement</button>
+    </div>
+  </section>
+
+  <!-- Diet Plan -->
+  <section id="addDietSection">
+      <div class="container">
+    <h2>Add Diet Plan</h2>
+    <input type="email" id="dietEmail" placeholder="Member Email">
+    <textarea id="dietDetails" placeholder="Enter Diet Details"></textarea>
+    <button onclick="addDietPlan()">Save Diet</button>
+    </div>
+  </section>
+
+  <!-- Notifications -->
+  <section id="sendNotificationSection">
+      <div class="container">
+    <h2>Send Notification</h2>
+    <input type="email" id="notifyEmail" placeholder="Member Email">
+    <input type="text" id="notifyMessage" placeholder="Notification Message">
+    <button onclick="sendNotification()">Send Notification</button>
+    </div>
+  </section>
+  </div>
+</main>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8oRn6GsVLkiop6mwtlvLJ1vFuEMOiIKg",
+      authDomain: "apna-gym-f5033.firebaseapp.com",
+      projectId: "apna-gym-f5033",
+      storageBucket: "apna-gym-f5033.appspot.com",
+      messagingSenderId: "144589871781",
+      appId: "1:144589871781:web:47197e784bf6b18a388b4c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const sections = [
+      "addMemberSection",
+      "createBillSection",
+      "addSupplementSection",
+      "addDietSection",
+      "sendNotificationSection"
+    ];
+
+    window.adminLogin = async function () {
+      const email = adminEmail.value;
+      const password = adminPassword.value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        document.getElementById("adminLoginSection").style.display = "none";
+        sections.forEach(id => document.getElementById(id).style.display = "block");
+        document.getElementById("logoutBtn").style.display = "inline-block";
+      } catch (error) {
+        alert("Login failed: " + error.message);
+      }
+    };
+
+    window.logout = async function () {
+      await signOut(auth);
+      window.location.reload();
+    };
+
+
+ window.addMember = async function () {
+      try {
+        const data = {
+          name: memberName.value,
+          email: memberEmail.value,
+          phone: memberPhone.value,
+          age: +memberAge.value,
+          gender: memberGender.value,
+          address: memberAddress.value,
+          createdAt: serverTimestamp()
+        };
+        await addDoc(collection(db, "members"), data);
+        alert("Member added successfully.");
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    };
+
+
+    window.createBill = async function () {
+      const bill = {
+        email: billMemberEmail.value,
+        amount: +billAmount.value,
+        dueDate: billDueDate.value,
+        createdAt: serverTimestamp()
+      };
+      await addDoc(collection(db, "bills"), bill);
+      alert("Bill added");
+    };
+
+    window.addSupplement = async function () {
+      const supplement = {
+        name: supplementName.value,
+        stock: +supplementStock.value,
+        price: +supplementPrice.value,
+        addedAt: serverTimestamp()
+      };
+      await addDoc(collection(db, "supplements"), supplement);
+      alert("Supplement added");
+    };
+
+    window.sendNotification = async function () {
+      const notify = {
+        email: notifyEmail.value,
+        message: notifyMessage.value,
+        sentAt: serverTimestamp()
+      };
+      await addDoc(collection(db, "notifications"), notify);
+      try {
+        await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service_id: "service_pidkqho",
+            template_id: "template_3zh3y0b",
+            user_id: "ygPhZait_P4wavBgF",
+            template_params: {
+              to_email: notifyEmail.value,
+              message: notifyMessage.value
+            }
+          })
+        });
+        alert("Notification and Email Sent");
+      } catch (err) {
+        alert("Notification saved but email failed");
+      }
+    };
+
+    window.addDietPlan = async function () {
+      const diet = {
+        email: dietEmail.value,
+        details: dietDetails.value,
+        addedAt: serverTimestamp()
+      };
+      await addDoc(collection(db, "diets"), diet);
+      alert("Diet added");
+    };
+
+  
+
+    document.getElementById("mobile-menu-btn").addEventListener("click", function () {
+      const navMenu = document.getElementById("nav-menu");
+      navMenu.classList.toggle("active");
+    });
+
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

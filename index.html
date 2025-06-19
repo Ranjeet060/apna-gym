@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna_Gym</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+
+   <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8oRn6GsVLkiop6mwtlvLJ1vFuEMOiIKg",
+    authDomain: "apna-gym-f5033.firebaseapp.com",
+    projectId: "apna-gym-f5033",
+    storageBucket: "apna-gym-f5033.appspot.com",
+    messagingSenderId: "144589871781",
+    appId: "1:144589871781:web:47197e784bf6b18a388b4c",
+    measurementId: "G-H68R74PD0N"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+</script>
+</head>
+<body>
+  <!-- Header -->
+  <header id="header">
+    <div class="container header-container">
+      <a href="#" class="logo">Apna<span>Gym</span></a>
+      <nav>
+        <ul id="nav-menu">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#facilities">Facilities</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#membership">Membership</a></li>
+          <li><a href="#trainers">Trainers</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><button class="btn" onclick="toggleRoles()">Login Dashboard</button>
+              <div class="role-buttons" id="roleButtons">
+               <a href="admin.html">Admin</a>
+               <a href="member.html">Member</a>
+               <a href="users.html">User</a>
+               </div>   
+          </li>
+        </ul>
+           <button  id="mobile-menu-btn" class="mobile-menu-btn" type="button"> <i class="fa-solid fa-bars"></i> </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="hero-content">
+        <h1> Strong today , Stronger tomorrow</h1>
+        <p>
+          Join Apna Gym and start your fitness journey today with expert
+          trainers and top-notch facilities.
+        </p>
+        <a href="#membership" class="btn">Join Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section about" id="about">
+    <div class="container">
+      <div class="section-title">
+        <h2>About Us</h2>
+        <p>
+          Apna Gym is dedicated to helping you achieve your fitness goals with
+          world-class facilities and personalized training programs.
+        </p>
+      </div>
+      <div class="about-content">
+        <div class="about-img">
+          <img
+            src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Gym Interior"
+          />
+        </div>
+        <div class="about-text">
+          <h3>Why Choose Apna Gym?</h3>
+          <p>
+            Apna Gym stands out for its dedication to helping every individual meet their fitness goals, no matter their experience level. With flexible membership plans, expert coaching, and a welcoming community, we ensure that your fitness journey is both enjoyable and sustainable.
+
+          </p>
+          <p>
+           We aim to empower you through personalized training routines, nutritional guidance, and continuous motivation—making your path to a healthier lifestyle simple and achievable.
+
+          </p>
+          <div class="about-features">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Modern Equipment</h4>
+                <p>
+                  We provide the latest fitness equipment from top brands to
+                  ensure your workout is effective.
+                </p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Expert Trainers</h4>
+                <p>
+                  Our certified trainers are dedicated to helping you achieve
+                  your fitness goals.
+                </p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-heartbeat"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Health Monitoring</h4>
+                <p>
+                  Regular health checkups to track your progress and adjust your
+                  fitness plan accordingly.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Facilities Section -->
+  <section class="section facilities" id="facilities">
+    <div class="container">
+      <div class="section-title">
+        <h2>Our Facilities</h2>
+        <p>
+          Explore our world-class facilities designed to provide you with the
+          best workout experience.
+        </p>
+      </div>
+      <div class="facilities-grid">
+        <div class="facility-card">
+          <div class="facility-img">
+            <img
+              src="https://plus.unsplash.com/premium_photo-1670505062582-fdaa83c23c9e?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Weight Training Area"
+            />
+          </div>
+          <div class="facility-content">
+            <h3>Weight Training</h3>
+            <p>
+              Our weight training area is equipped with the latest machines and
+              free weights to help you build strength and muscle.
+            </p>
+            <a href="#" class="btn">Learn More</a>
+          </div>
+        </div>
+        <div class="facility-card">
+          <div class="facility-img">
+            <img
+              src="https://images.unsplash.com/photo-1593079831268-3381b0db4a77?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Cardio Area"
+            />
+          </div>
+          <div class="facility-content">
+            <h3>Cardio Zone</h3>
+            <p>
+              State-of-the-art cardio equipment including treadmills,
+              ellipticals, and stationary bikes for your cardiovascular workouts.
+            </p>
+            <a href="#" class="btn">Learn More</a>
+          </div>
+        </div>
+        <div class="facility-card">
+          <div class="facility-img">
+            <img
+              src="https://images.unsplash.com/photo-1637430308606-86576d8fef3c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Group Classes"
+            />
+          </div>
+          <div class="facility-content">
+            <h3>Group Classes</h3>
+           <p>
+  Experience the energy of our dynamic group sessions featuring Pilates, dance cardio, strength training, and bootcamp workouts — perfect for staying motivated and fit.
+</p>
+
+            <a href="#" class="btn">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="section services" id="services">
+    <div class="container">
+      <div class="section-title">
+        <h2>Our Services</h2>
+        <p>
+          We offer a wide range of services to meet all your fitness needs and
+          help you achieve your goals.
+        </p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-user-tie"></i>
+          </div>
+          <h3>Personal Training</h3>
+          <p>
+            One-on-one sessions with our expert trainers to create a customized
+            workout plan just for you.
+          </p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <h3>Nutrition Planning</h3>
+          <p>
+            Personalized nutrition plans to complement your workout routine and
+            maximize results.
+          </p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <h3>Body Analysis</h3>
+          <p>
+            Advanced body composition analysis to track your progress and adjust
+            your fitness plan.
+          </p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-spa"></i>
+          </div>
+          <h3>Recovery Services</h3>
+          <p>
+            Massage therapy and recovery services to help your muscles recover
+            after intense workouts.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Membership Section -->
+  <section class="section membership" id="membership">
+    <div class="container">
+      <div class="section-title">
+        <h2>Membership Plans</h2>
+        <p>
+          Choose the plan that fits your lifestyle and fitness goals. All plans
+          include access to all facilities.
+        </p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Basic</h3>
+            <div class="price">
+              ₹699<span>/month</span>
+            </div>
+          </div>
+          <div class="pricing-body">
+            <ul class="pricing-features">
+              <li>Access to gym facilities</li>
+              <li>Free Wi-Fi</li>
+              <li>Locker room access</li>
+              <li>Basic fitness assessment</li>
+              <li>1 free group class per week</li>
+            </ul>
+            <a href="#" class="btn" onclick="openForm('Basic')">Join Now</a>
+          </div>
+        </div>
+        <div class="pricing-card popular">
+          <div class="popular-tag">Popular</div>
+          <div class="pricing-header">
+            <h3>Premium</h3>
+            <div class="price">
+              ₹999<span>/month</span>
+            </div>
+          </div>
+          <div class="pricing-body">
+            <ul class="pricing-features">
+              <li>All Basic features</li>
+              <li>Unlimited group classes</li>
+              <li>Sauna &amp; steam room access</li>
+              <li>Monthly body analysis</li>
+              <li>Discounts on personal training</li>
+            </ul>
+           
+<a href="#" class="btn" onclick="openForm('Premium')">Join Now</a>
+          </div>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>VIP</h3>
+            <div class="price">
+              ₹1399<span>/month</span>
+            </div>
+          </div>
+          <div class="pricing-body">
+            <ul class="pricing-features">
+              <li>All Premium features</li>
+              <li>2 personal training sessions</li>
+              <li>Nutrition consultation</li>
+              <li>Towel service</li>
+              <li>Priority booking for classes</li>
+            </ul>
+           
+<a href="#" class="btn" onclick="openForm('VIP')">Join Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Join Form Modal -->
+<div id="joinFormModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeForm()">&times;</span>
+    <h2>Join <span id="selectedPackage"></span> Package</h2>
+    <input type="text" id="memberName" placeholder="Your Name" required />
+    <input type="number" id="memberAge" placeholder="Your Age" required />
+    <input type="email" id="memberEmail" placeholder="Your Email" required />
+    <button onclick="submitForm()">Submit</button>
+  </div>
+</div>
+
+  </section>
+
+  <!-- Trainers Section -->
+  <section class="section trainers" id="trainers">
+    <div class="container">
+      <div class="section-title">
+        <h2>Our Trainers</h2>
+        <p>
+          Meet our team of certified and experienced trainers dedicated to helping
+          you reach your fitness goals.
+        </p>
+      </div>
+      <div class="trainers-grid">
+        <div class="trainer-card">
+          <div class="trainer-img">
+            <img
+              src="https://images.unsplash.com/photo-1639496908204-6f949b0f46e1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Trainer 1"
+            />
+          </div>
+          <div class="trainer-content">
+            <h3>RamBilash Nagar</h3>
+            <p>Strength Training</p>
+            <div class="trainer-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="trainer-card">
+          <div class="trainer-img">
+            <img
+              src="https://media.istockphoto.com/id/1334071264/photo/young-woman-in-yoga-pose-using-laptop-at-home.webp?a=1&b=1&s=612x612&w=0&k=20&c=Vz5D-ZJg1_PGO79F8cX2rhxwzpsaNwf13orOTUY_ZCk="
+              alt="Trainer 2"
+            />
+          </div>
+          <div class="trainer-content">
+            <h3>Anushka Shah</h3>
+            <p>Yoga & Pilates</p>
+            <div class="trainer-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="trainer-card">
+          <div class="trainer-img">
+            <img
+              src="https://images.unsplash.com/photo-1738523686578-f18348c8292b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Trainer 3"
+            />
+          </div>
+          <div class="trainer-content">
+            <h3>Durgesh Chandel</h3>
+            <p>Functional Training</p>
+            <div class="trainer-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="trainer-card">
+          <div class="trainer-img">
+            <img
+              src="https://images.unsplash.com/photo-1694712247716-f8d66bea536d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Trainer 4"
+            />
+          </div>
+          <div class="trainer-content">
+            <h3>Ajay Singh</h3>
+            <p>HIIT & Cardio</p>
+            <div class="trainer-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="section testimonials">
+    <div class="container">
+      <div class="section-title">
+        <h2>Success Stories</h2>
+        <p>
+          Hear from our members about their transformation journeys with Apna
+          Gym.
+        </p>
+      </div>
+      <div class="testimonials-container">
+        <div class="testimonial-slide">
+          <div class="testimonial-img">
+             <img src="https://media.istockphoto.com/id/2060009001/vector/avatar-user-profile-person-icon-profile-picture-for-social-media-profiles-icons-screensavers.jpg?s=612x612&w=0&k=20&c=onk7rmEoISSvHVlqc-SiBvcUr8ilCm2u9kcw3_Bm_SA=" alt="Testimonial 1">
+
+          </div>
+          <p class="testimonial-text">
+            "Joining Apna Gym was the best decision I ever made. The trainers are
+            knowledgeable and supportive, and the facilities are top-notch. I've
+            lost 25 pounds and gained so much confidence!"
+          </p>
+          <div class="testimonial-author">
+            <h4>Tannu Jain</h4>
+            <p>Member since 2022</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Contact Section -->
+  <section class="section contact" id="contact">
+    <div class="container">
+      <div class="section-title">
+        <h2>Contact Us</h2>
+        <p>Have questions or want to schedule a tour? Get in touch with us today.</p>
+      </div>
+      <div class="contact-container">
+        <div class="contact-info">
+          <h3>Get In Touch</h3>
+          <p>
+            We're here to help you on your fitness journey. Contact us with any
+            questions or to schedule a free trial session.
+          </p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="contact-text">
+                <h4>Location</h4>
+                <p>123 ShreeJi Street, Smart City, Bilaspur</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-phone-alt"></i>
+              </div>
+              <div class="contact-text">
+                <h4>Phone</h4>
+                <p>+91 12345-67890</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="contact-text">
+                <h4>Email</h4>
+                <p>info@ApnaGym.com</p>
+              </div>
+            </div>
+          </div>
+          <div class="contact-social">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="contact-form">
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Your Email</label>
+              <input type="email" id="email" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" class="form-control" required></textarea>
+            </div>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-container">
+        <div class="footer-col">
+          <h3>About Apna Gym</h3>
+          <p>
+            Apna Gym is dedicated to helping you achieve your fitness goals with
+            world-class facilities and personalized training programs.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#facilities">Facilities</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#membership">Membership</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Opening Hours</h3>
+          <ul class="footer-links">
+            <li>Monday - Friday: Morning 5:00 AM -9 AM and Evening 5 PM - 11:00 PM</li>
+            <li>Saturday & Sunday : Morining 6:00 AM - 10 AM and Evening 5 PM - 9:00 PM</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Newsletter</h3>
+          <p>Subscribe to our newsletter for fitness tips and special offers.</p>
+          <form class="footer-newsletter">
+            <input type="email" placeholder="Your Email" required />
+            <button type="submit" class="btn">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <span id="year">2025</span> Apna Gym. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <a href="#" class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </a>
+
+  <script  src="script.js"></script>
+  <script src="https://cdn.botpress.cloud/webchat/v2.5/inject.js"></script>
+  <script src="https://files.bpcontent.cloud/2025/05/26/15/20250526154905-M5FGFFF9.js"></script>
+
+  <script>
+    window.botpressWebChat.init({
+      composerPlaceholder: "Chat with AI_Chatbot",
+      botId: "AI_Chatbot",
+      hostUrl: "https://cdn.botpress.cloud/webchat/v2",
+      messagingUrl: "https://messaging.botpress.cloud",
+      clientId: "888e972a-9952-48e2-b971-8a581eb962de",
+      webhookId: "msf6gff9",
+      lazySocket: true,
+      themeName: "prism",
+      botName: "AI_Chatbot",
+      avatarUrl: "",
+      stylesheet: "",
+      enableConversationDeletion: true,
+      showPoweredBy: false,
+    });
+  </script>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD8oRn6GsVLkiop6mwtlvLJ1vFuEMOiIKg",
+  authDomain: "apna-gym-f5033.firebaseapp.com",
+  projectId: "apna-gym-f5033",
+  storageBucket: "apna-gym-f5033.appspot.com",
+  messagingSenderId: "144589871781",
+  appId: "1:144589871781:web:47197e784bf6b18a388b4c",
+  measurementId: "G-H68R74PD0N"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Global to track package
+let selectedPackage = "";
+
+window.openForm = function(pkg) {
+  selectedPackage = pkg;
+  document.getElementById("selectedPackage").innerText = pkg;
+  document.getElementById("joinFormModal").style.display = "block";
+};
+
+window.closeForm = function() {
+  document.getElementById("joinFormModal").style.display = "none";
+};
+
+window.submitForm = async function() {
+  const name = document.getElementById("memberName").value;
+  const age = document.getElementById("memberAge").value;
+  const email = document.getElementById("memberEmail").value;
+
+  if (!name || !age || !email) {
+    alert("Please fill all fields.");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "members"), {
+      name,
+      age: parseInt(age),
+      email,
+      package: selectedPackage,
+      createdAt: serverTimestamp()
+    });
+
+    alert("Membership form submitted successfully!");
+    closeForm();
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
+};
+</script>
+
+
+
+   <script type="module" src="firebase-config.js"></script>
+   <script type="module" src="auth.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
+
